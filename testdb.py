@@ -289,6 +289,8 @@ class DBHelper:
 		self.conn.execute(stmt)
 		stmt = "INSERT into subjecttable (subject, subjectcode) VALUES ('NETWORK SECURITY','UCS522')"
 		self.conn.execute(stmt)	
+		stmt = "INSERT into subjecttable (subject, subjectcode) VALUES ('OPTIMIZATION TECHNIQUES','UMA031')"
+		self.conn.execute(stmt)	
 		self.conn.commit()
 
 

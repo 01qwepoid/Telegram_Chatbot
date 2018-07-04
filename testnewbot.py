@@ -3,7 +3,7 @@ import random
 import requests 	
 import time 
 import urllib   # handles special characters
-from testdb import DBHelper
+from testdb1 import DBHelper
 from time import strftime
 
 db = DBHelper()
@@ -119,9 +119,15 @@ def handle_updates(updates):
 			if len(sem)>0:
 				sem = list(set(sem))
 				sub = db.get_CSsubjects(chat, sem[0])
-				sub = set(sub)
-				print("sub : {}".format(sub))
-				keyboard = build_keyboard(sub)
+#hereeee
+#				sub = [set(sub)]
+				output = []
+				for x in sub:
+					if x not in output:
+						output.append(x)
+
+				print("sub : {}".format(output))
+				keyboard = build_keyboard(output)
 				send_message("Select a subject",chat, keyboard)
 				break
 
@@ -143,6 +149,7 @@ def handle_updates(updates):
 		
 		if len((ctext & sem1) | (ctext & sem2) | (ctext & sem3) | (ctext & sem4) | (ctext & sem5) | (ctext & sem6))>0:
 			sub = list((ctext & sem1) | (ctext & sem2) | (ctext & sem3) | (ctext & sem4) | (ctext & sem5) | (ctext & sem6))[0]
+			print(sub)
 			sub = sub.upper()
 			details = db.get_subjectdetail(sub)
 			print("details are : {}".format(details[0]))
@@ -152,9 +159,16 @@ def handle_updates(updates):
 			cred = list(set(details[3]))
 			tname = db.get_teacher(sub)
 			#tname = list(set(tname[0]))
-			print(tname)
+			print('tname',tname)
+			print('lec',lec)
+			print('tut',tut)
+			#print('tname)
+			print('prac',prac)
+			print('cred',cred)
+			#print(sub)
 
-			send_message("{} :\nL:{}\tT:{}\tP:{}\nCredits:{}\nSubject Teacher :{} ".format(sub,lec,tut,prac,cred,tname[0]),chat)
+
+			send_message("{} :\nL:{}\tT:{}\tP:{}\nCredits:{}\nSubject Teacher :{} ".format(sub,lec[0],tut[0],prac[0],cred[0],tname[0]),chat)
 			print("i am here")
 			print(sub)
 			break
@@ -188,7 +202,7 @@ def handle_updates(updates):
 #			options = ['More info on Semester {}'.format(sem1),'Cancel']
 			print(options)
 			keyboard = build_keyboard(options)
-			send_message("menu",chat,keyboard)
+			send_message("Check option:",chat,keyboard)
 			break
 
 
