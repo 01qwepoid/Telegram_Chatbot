@@ -3,7 +3,7 @@ import random
 import requests 	
 import time 
 import urllib   # handles special characters
-from testdb1 import DBHelper
+from testdb import DBHelper
 from time import strftime
 
 db = DBHelper()
@@ -47,26 +47,26 @@ def handle_updates(updates):
 	sem5 = {'advanced data structures and algorithms','software engineering','computer arch and organization','theory of computation','artificial intelligence','professional practices','elective i'}
 	sem6 = {'microprocessor-based systems design','embedded systems design','image processing','elective ii','elective iii','innovation and entrepreneurship','capstone project'}
 	cssem = {'semester 1','semester 2','semester 3','semester 4','semester 5','semester 6'}
-
-
 	greetings = {'hey','hello','hola','hi','hii','hie','heya'}
-#	greetask = {'howdy','how are you', 'how\'re you','how\'s you'}
 	complaint =9999
 	step=9999
-	print("In handle updates")
 
+#### The main brain code starts here #############	
+
+	print("In handle updates")
 	for update in updates["result"]:
 		chat = update["message"]["chat"]["id"]
 		exists = list(update["message"].keys())
-#		print(exists) ......................debug
-#Master Code to block Khanna
-#		if chat ==180160591: 
-#			break
-#Master Code to block Sumit 
-#		if chat ==500330866:
-#			break
 
-#handles forwarded texts ##################
+	#Master Code to block Khanna
+	#		if chat ==180160591: 
+	#			break
+	#Master Code to block Sumit 
+	#		if chat ==500330866:
+	#			break
+
+	
+	#handles forwarded texts ##################
 		if exists[4] == 'forward_from':
 			if exists[6] !='text':
 				send_message("I'm not sure, what to do with this ! ",chat)
@@ -303,6 +303,7 @@ def handle_updates(updates):
 			 
 
 #step5
+#TODO --------- room and unique id pass 
 		# elif room ==1:
 		# 	db.updatesmtableroom(chat, text)
 		# 	send_message("Thank You ! You are now registered with us !", chat)	
@@ -349,8 +350,7 @@ def handle_updates(updates):
 			send_message("Thank You. Your grievance has been noted. Your id is {}".format(id),chat)
 
 
-
-
+	#dealing with custom helper queries (starting with a '/')
 		elif text.startswith("/"):
 			continue
 	
@@ -415,28 +415,16 @@ def handle_updates(updates):
 					else:
 						send_message("You have no class at this time ! ",chat)
 
-
-
-
-
-			# 	print("a is ")
-					
-			# 	smday=1
-			# 	smtime =11
-			# #	print(type(a))
-			# 	print(a)
-			# #	db.
-
+	#query for dob
 		elif 'when' in words:
 			if 'born' in words:
 				send_message("I was conceptualised on November 8, 2017.",chat)
-	
-		# elif func(greetask,words):
-		# 	send_message("I'm good ! :)",chat)
 
+	#generate reply greetings
 		elif func(greetings, words):
 			reply = random.choice(list(greetings))
 			send_message(reply,chat)
+	#if random text encountered
 		else:
 			if len(text)>0:
 				message = "\nYou're talking gibberish ! >.<"
@@ -444,12 +432,13 @@ def handle_updates(updates):
 			else:
 				continue
 			
-
+#builds a custom keyboard with entries from the list
 def build_keyboard(listofit):   
 	keyboard = [[item] for item in listofit]
 	reply_markup = {"keyboard":keyboard, "one_time_keyboard":True}
 	return json.dumps(reply_markup)
 
+#maintains connection with the bot home page, where updates arrive with each message
 def get_url(url):
 	response = requests.get(url)
 	content = response.content.decode("utf8")
@@ -467,6 +456,7 @@ def get_updates(offset=None):
 	js = get_json_from_url(url)
 	return js
 
+#functions to get last chat_id, text, update id using JSON
 def get_last_chat_id_and_text(updates):
 	num_updates = len(updates["result"])
 	last_update = num_updates -1
@@ -479,15 +469,9 @@ def get_last_update_id(updates):
 	for update in updates["result"]:
 		update_ids.append(int(update["update_id"]))
 	return max(update_ids)	
+##########################################################
 
-
-# def send_message(text, chat_id, reply_markup=None):
-# 	text = urllib.parse.quote_plus(text)
-# 	url = URL + "sendMessage?text={}&chat_id={}&parse_mode=Markdown".format(text,chat_id)
-# 	if reply_markup:
-# 		url+="&reply_markup={}".format(reply_markup)
-# 	get_url(url)
-
+#function to send messages
 def send_message(text, chat_id, reply_markup=None):
 	text = urllib.parse.quote_plus(text)
 	url = URL + "sendMessage?text={}&chat_id={}&parse_mode=Markdown".format(text,chat_id)
@@ -496,6 +480,7 @@ def send_message(text, chat_id, reply_markup=None):
 	get_url(url)
 
 
+#main function
 def main():
 	db.setupall()
 	db.add_messmenu()
@@ -508,8 +493,9 @@ def main():
 	last_update_id = None
 	print("started main")
 	room=1
-	while True:
 
+#waits infinitely for a message to arrive
+	while True:
 		print("inside while")
 		updates = get_updates(last_update_id)
 		if len(updates["result"])>0:
@@ -519,11 +505,6 @@ def main():
 			#echo_all(updates)
 		time.sleep(0.5)
 
-
-		# text,chat = get_last_chat_id_and_text(get_updates())
-		# if (text,chat) != last_textchat:
-		# 	send_message(text,chat)
-		# 	last_textchat = (text,chat)
-
+#init function
 if __name__ == '__main__':
 	main()
